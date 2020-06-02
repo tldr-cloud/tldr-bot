@@ -1,13 +1,16 @@
 import base64
 import nltk
 
+
 from boilerpy3 import extractors
 
+from google.api_core import exceptions
 from google.cloud import firestore
 from google.cloud import pubsub_v1
-from google.api_core import exceptions
 
 from newspaper import Article
+
+from summarizer import Summarizer
 
 nltk.download("punkt")
 
@@ -18,6 +21,8 @@ publisher = pubsub_v1.PublisherClient()
 topic = "processed-urls"
 topic_path = publisher.topic_path("tldr-278619", topic)
 
+# Required by Summarizer
+model = Summarizer()
 
 def generate_id_from_url(url):
      return url.replace("/", "_").replace(":", "_")
@@ -32,9 +37,9 @@ def extract_data(url):
      print("parsing completed")
      if not article.text or len(article.text) < 100:
          article.text = extractor.get_content(article.html)
-     article.nlp()
+     summary = model(article.text, min_length=60)
      print("nlp step completed")
-     return (article.summary, article.top_image, article.title)
+     return (summary, article.top_image, article.title)
 
 
 def publish_id(doc_id):
@@ -81,7 +86,8 @@ def process_function_all(event, context):
 
 
 def main():
-    process_url("https://thehustle.co/05282020-remote-work-pay/")
+    summary, top_image, title = extract_data("https://www.washingtonpost.com/technology/2020/05/20/best-video-chat-apps/")
+    print(summary)
 
 
 if "__main__" == __name__:
