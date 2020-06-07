@@ -1,0 +1,3 @@
+newspaper3k==0.2.*
+nltk==3.5.*
+boilerpy3==1.0.*
