@@ -1,0 +1,2 @@
+google-cloud-pubsub==1.5.*
+google-cloud-secret-manager==1.0.*

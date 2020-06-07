@@ -1,1 +1,0 @@
-gcloud functions deploy new-url-processor --entry-point new_url_processor --runtime python37 --trigger-http --service-account urls-processor@tldr-278619.iam.gserviceaccount.com
