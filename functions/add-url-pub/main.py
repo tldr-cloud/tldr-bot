@@ -23,7 +23,8 @@ bearer = secret_response.payload.data.decode('UTF-8')
 def preview_url(url, session, retry_count):
     import requests
     try:
-        resp = requests.post(url=summary_extractor_url, json={"url": url}, timeout=2).json()
+        headers = {"bearer": bearer}
+        resp = requests.post(url=summary_extractor_url, json={"url": url}, timeout=2, headers=headers).json()
     except requests.exceptions.Timeout:
         if retry_count < 5:
             retry_response = {
