@@ -1,5 +1,7 @@
 import base64
 import nltk
+import requests
+import constants
 
 from boilerpy3 import extractors
 
@@ -7,7 +9,9 @@ from google.cloud import firestore
 from google.cloud import pubsub_v1
 from google.api_core import exceptions
 
-from newspaper import Article
+from google.cloud import secretmanager
+
+secret_id = "bearer"
 
 nltk.download("punkt")
 
@@ -16,7 +20,14 @@ extractor = extractors.ArticleExtractor()
 
 publisher = pubsub_v1.PublisherClient()
 topic = "processed-urls"
-topic_path = publisher.topic_path("tldr-278619", topic)
+topic_path = publisher.topic_path(constants.PROJECT_ID, topic)
+
+client = secretmanager.SecretManagerServiceClient()
+secret_name = client.secret_version_path(constants.PROJECT_ID, secret_id, "1")
+secret_response = client.access_secret_version(secret_name)
+bearer = secret_response.payload.data.decode('UTF-8')
+
+summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
 
 
 def generate_id_from_url(url):
@@ -24,17 +35,8 @@ def generate_id_from_url(url):
 
 
 def extract_data(url):
-     article = Article(url)
-     print("article object created")
-     article.download()
-     print("download completed")
-     article.parse()
-     print("parsing completed")
-     if not article.text or len(article.text) < 100:
-         article.text = extractor.get_content(article.html)
-     article.nlp()
-     print("nlp step completed")
-     return (article.summary, article.top_image, article.title)
+     resp = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer}).json()
+     return (resp["summary"], resp["top_image"], resp["title"])
 
 
 def publish_id(doc_id):
