@@ -1,21 +1,14 @@
 import nltk
+import utils
 
 from boilerpy3 import extractors
 from newspaper import Article
 from flask import jsonify
-from google.cloud import secretmanager
 
 nltk.download("punkt")
 
 extractor = extractors.ArticleExtractor()
-
-project_id = "tldr-278619"
-secret_id = "bearer"
-
-client = secretmanager.SecretManagerServiceClient()
-secret_name = client.secret_version_path(project_id, secret_id, "1")
-secret_response = client.access_secret_version(secret_name)
-bearer = secret_response.payload.data.decode('UTF-8')
+bearer = utils.get_bearer()
 
 
 def generate_id_from_url(url):
