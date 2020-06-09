@@ -1,6 +1,7 @@
 import json
 
 from google.cloud import secretmanager
+from flask import jsonify
 
 publisher = None
 topic = "new-urls"
@@ -10,6 +11,7 @@ summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extr
 
 status_publish = "publish"
 status_preview = "preview"
+status_test = "test"
 
 project_id = "tldr-278619"
 secret_id = "bearer"
@@ -23,8 +25,9 @@ bearer = secret_response.payload.data.decode('UTF-8')
 def preview_url(url, session, retry_count):
     import requests
     try:
-        headers = {"bearer": bearer}
-        resp = requests.post(url=summary_extractor_url, json={"url": url}, timeout=2, headers=headers).json()
+        resp_raw = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer}, timeout=2)
+        print(resp_raw.content)
+        resp = resp_raw.json()
     except requests.exceptions.Timeout:
         if retry_count < 5:
             retry_response = {
@@ -58,7 +61,7 @@ def preview_url(url, session, retry_count):
     top_image = resp["top_image"]
     fulfillment_messages = [{"text": {"text": [msg]}} for msg in summary.split("\n")]
     fulfillment_messages.append({"text": {"text": ["===================="]}})
-    fulfillment_messages.append({"text": {"text": ["Is this good enough?"]}})
+    fulfillment_messages.append({"text": {"text": ["Is this good enough? or you want first to test this shit?"]}})
     # noinspection PyTypeChecker
     fulfillment_messages.append(
         {
@@ -70,6 +73,10 @@ def preview_url(url, session, retry_count):
                 {
                     "postback": "no",
                     "text": "no"
+                },
+                {
+                    "postback": "test",
+                    "text": "test"
                 }
             ],
             "imageUrl": top_image
@@ -93,20 +100,25 @@ def preview_url(url, session, retry_count):
 def get_status(request_json):
     if "status" in request_json["queryResult"]["parameters"]:
         status = request_json["queryResult"]["parameters"]["status"]
-        if status == status_publish:
-            return status_publish
+        return status
     return status_preview
 
 
-def publish_url(url):
+def publish_url(url, test=False):
     print("publishing URL: {}".format(url))
     from google.cloud import pubsub_v1
     global publisher
     if not publisher:
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path("tldr-278619", topic)
+    msg_dict = {
+        "url": url,
+        "test": test
+    }
     # msg data must be a bytestring
-    msg_data = url.encode("utf-8")
+    msg_str = json.dumps(msg_dict)
+    print("msg to post: {}".format(msg_str))
+    msg_data = msg_str.encode("utf-8")
     publisher.publish(
         topic_path, msg_data
     )
@@ -123,15 +135,21 @@ def publish_url(url):
 
 
 def process_function_request(request):
+    print("request initiated")
     # Yes the following three lines are horrible, there is a reason for this, and it will be fixed ASAP.
     bearer_from_request = request.headers["bearer"]
     if bearer_from_request != bearer:
+        print("incorrect bearer")
         return "error"
     request_json = request.get_json()
+    print("request: {}".format(str(request_json)))
     status = get_status(request_json)
-    if status == status_publish:
+    print("status: {}".format(status))
+    if status == status_publish or status == status_test:
+        test = status == status_test
+        print("test status: {}".format(test))
         url = request_json["queryResult"]["outputContexts"][0]["parameters"]["url"]
-        return publish_url(url)
+        return publish_url(url, test=test)
     if status == status_preview:
         url = request_json["queryResult"]["parameters"]["url"]
         session = request_json["session"]
@@ -147,3 +165,9 @@ def process_function_request(request):
         ]
     }
     return json.dumps(resp)
+
+
+if "__main__" == __name__:
+    publish_url("https://www.itnews.com/article/3561496/"
+                "google-meet-denoiser-video-shows-shockingly-good-noise-filtering.html",
+                True)

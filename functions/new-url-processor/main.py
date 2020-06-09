@@ -2,6 +2,7 @@ import base64
 import nltk
 import requests
 import constants
+import json
 
 from boilerpy3 import extractors
 
@@ -10,6 +11,7 @@ from google.cloud import pubsub_v1
 from google.api_core import exceptions
 
 from google.cloud import secretmanager
+from flask import jsonify
 
 secret_id = "bearer"
 
@@ -39,15 +41,19 @@ def extract_data(url):
      return (resp["summary"], resp["top_image"], resp["title"])
 
 
-def publish_id(doc_id):
-    msg_data = doc_id.encode("utf-8")
+def publish_id(doc_id, test):
+    msg_dict = {
+        "doc_id": doc_id,
+        "test": test
+    }
+    msg_data = jsonify(msg_dict).encode("utf-8")
     publisher.publish(
         topic_path, msg_data
     )
     print("msg published")
 
 
-def process_url(url):
+def process_url(url, test):
     doc_id = generate_id_from_url(url)
     print("url_id: {}".format(url))
     try:
@@ -55,7 +61,7 @@ def process_url(url):
         print("new doc created")
     except exceptions.AlreadyExists:
         print("exceptions.AlreadyExists")
-        publish_id(doc_id)
+        publish_id(doc_id, test)
         return
     summary, top_image, title = extract_data(url)
     doc_data = {
@@ -67,7 +73,7 @@ def process_url(url):
     print("adding record to db")
     urls_collection.document(doc_id).set(doc_data)
     print("added")
-    publish_id(doc_id)
+    publish_id(doc_id, test)
 
 
 def process_function_all(event, context):
@@ -77,9 +83,10 @@ def process_function_all(event, context):
          context (google.cloud.functions.Context): Metadata for the event.
     """
     print("function started")
-    url = base64.b64decode(event["data"]).decode("utf-8")
-    print("url: {}".format(url))
-    process_url(url)
+    data = base64.b64decode(event["data"]).decode("utf-8")
+    data_dict = json.loads(data)
+    print("data: {}".format(str(data_dict)))
+    process_url(data_dict["url"], data_dict["test"])
 
 
 def main():

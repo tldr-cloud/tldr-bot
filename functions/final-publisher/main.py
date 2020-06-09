@@ -1,5 +1,6 @@
 import base64
 import telegram
+import json
 
 from google.cloud import firestore
 from google.cloud import secretmanager
@@ -16,11 +17,11 @@ bot = telegram.Bot(payload)
 
 urls_collection = firestore.Client().collection(u"urls")
 
-# chat_id = "@tldrtest"
-chat_id = "@techtldr"
+test_chat_id = "@tldrtest"
+prod_chat_id = "@techtldr"
 
 
-def publish(doc_id):
+def publish(doc_id, test):
     doc_ref = urls_collection.document(doc_id)
     doc = doc_ref.get()
     if not doc.exists:
@@ -33,6 +34,12 @@ def publish(doc_id):
         text = "{}\n* {}".format(text, paragraph)
 
     text = utils.helpers.escape_markdown(text, version=2)
+
+    if test:
+        chat_id = test_chat_id
+    else:
+        chat_id = prod_chat_id
+
     bot.send_message(chat_id=chat_id,
                      text='<b><a href="{url}">{title}</a></b>.'.format(url=url, title=title),
                      parse_mode=telegram.ParseMode.HTML,
@@ -49,8 +56,9 @@ def function_call_publish(event, context):
          event (dict): Event payload.
          context (google.cloud.functions.Context): Metadata for the event.
     """
-    doc_id = base64.b64decode(event["data"]).decode("utf-8")
-    publish(doc_id)
+    msg_data = base64.b64decode(event["data"]).decode("utf-8")
+    data_dict = json.loads(msg_data)
+    publish(data_dict["doc_id"], data_dict["test"])
 
 
 if "__main__" == __name__:

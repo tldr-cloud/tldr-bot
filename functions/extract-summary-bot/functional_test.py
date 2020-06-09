@@ -3,7 +3,8 @@ import constants
 import requests
 
 
-test_url = "https://www.cnn.com/2020/06/08/politics/defund-the-police-blm/index.html"
+test_url = ("https://www.extremetech.com/internet/"
+            "311436-windows-10-begins-showing-ads-for-edge-when-you-search-for-other-browsers")
 
 
 request = {
