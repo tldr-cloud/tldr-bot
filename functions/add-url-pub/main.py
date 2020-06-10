@@ -1,7 +1,6 @@
 import json
 
 from google.cloud import secretmanager
-from flask import jsonify
 
 publisher = None
 topic = "new-urls"
@@ -108,6 +107,7 @@ def publish_url(url, test=False):
     print("publishing URL: {}".format(url))
     from google.cloud import pubsub_v1
     global publisher
+    global topic_path
     if not publisher:
         publisher = pubsub_v1.PublisherClient()
         topic_path = publisher.topic_path("tldr-278619", topic)

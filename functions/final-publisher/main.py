@@ -51,12 +51,9 @@ def publish(doc_id, test):
 
 
 def function_call_publish(event, context):
-    """Triggered from a message on a Cloud Pub/Sub topic.
-    Args:
-         event (dict): Event payload.
-         context (google.cloud.functions.Context): Metadata for the event.
-    """
+    print("final-publisher invoked")
     msg_data = base64.b64decode(event["data"]).decode("utf-8")
+    print("msg data: {}".format(msg_data))
     data_dict = json.loads(msg_data)
     publish(data_dict["doc_id"], data_dict["test"])
 

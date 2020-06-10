@@ -11,7 +11,6 @@ from google.cloud import pubsub_v1
 from google.api_core import exceptions
 
 from google.cloud import secretmanager
-from flask import jsonify
 
 secret_id = "bearer"
 
@@ -46,7 +45,9 @@ def publish_id(doc_id, test):
         "doc_id": doc_id,
         "test": test
     }
-    msg_data = jsonify(msg_dict).encode("utf-8")
+    msg_str = json.dumps(msg_dict)
+    print("publishing msg: {}".format(msg_str))
+    msg_data = msg_str.encode("utf-8")
     publisher.publish(
         topic_path, msg_data
     )
