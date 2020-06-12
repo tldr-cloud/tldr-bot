@@ -59,4 +59,4 @@ def function_call_publish(event, context):
 
 
 if "__main__" == __name__:
-    publish("https___thenextweb.com_apps_2020_06_05_dropbox-is-testing-a-new-password-manager-app_")
+    publish("https___www.theverge.com_platform_amp_2020_6_9_21285011_google-meet-background-noise-artificial-intelligence-machine-learning", True)
