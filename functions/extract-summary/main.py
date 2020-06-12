@@ -40,7 +40,7 @@ def process_url(url):
     return doc_data
 
 
-def process_call(request):
+def process_request(request):
     request_json = request.get_json()
     # Yes the following three lines are horrible, there is a reason for this, and it will be fixed ASAP.
     bearer_from_request = request_json["bearer"]
@@ -51,3 +51,10 @@ def process_call(request):
         return jsonify(process_url(url))
     else:
         return f"There is not url key in the request!"
+
+
+def process_call(request):
+    try:
+        return process_request(request)
+    except Exception as e:
+        utils.inform_boss_about_an_error(str(e), "extract-summary")
