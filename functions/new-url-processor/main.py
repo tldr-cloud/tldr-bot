@@ -20,8 +20,10 @@ urls_collection = firestore.Client().collection(u"urls")
 extractor = extractors.ArticleExtractor()
 
 publisher = pubsub_v1.PublisherClient()
-topic = "processed-urls"
-topic_path = publisher.topic_path(constants.PROJECT_ID, topic)
+prod_topic = "processed-urls"
+prod_topic_path = publisher.topic_path(constants.PROJECT_ID, prod_topic)
+test_topic = "processed-urls-test"
+test_topic_path = publisher.topic_path(constants.PROJECT_ID, test_topic)
 
 client = secretmanager.SecretManagerServiceClient()
 secret_name = client.secret_version_path(constants.PROJECT_ID, secret_id, "1")
@@ -41,13 +43,11 @@ def extract_data(url):
 
 
 def publish_id(doc_id, test):
-    msg_dict = {
-        "doc_id": doc_id,
-        "test": test
-    }
-    msg_str = json.dumps(msg_dict)
-    print("publishing msg: {}".format(msg_str))
-    msg_data = msg_str.encode("utf-8")
+    msg_data = doc_id.encode("utf-8")
+    if test:
+        topic_path = test_topic_path
+    else:
+        topic_path = prod_topic_path
     publisher.publish(
         topic_path, msg_data
     )
@@ -78,11 +78,6 @@ def process_url(url, test):
 
 
 def process_function_all(event, context):
-    """Triggered from a message on a Cloud Pub/Sub topic.
-    Args:
-         event (dict): Event payload.
-         context (google.cloud.functions.Context): Metadata for the event.
-    """
     print("function started")
     data = base64.b64decode(event["data"]).decode("utf-8")
     data_dict = json.loads(data)
