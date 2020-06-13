@@ -15,12 +15,18 @@ summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extr
 
 
 def process_call(request):
+    request_json = request.get_json()
+
+    if not request_json:
+        # Assuming this is a request from cloud scheduler to keep function HOT
+        # Find a better way to do this
+        return "PING_OK"
+
     # Yes the following three lines are horrible, there is a reason for this, and it will be fixed ASAP.
     bearer_from_request = request.headers["bearer"]
     if bearer_from_request != bearer:
         return "error"
     print(request)
-    request_json = request.get_json()
     url = request_json["queryResult"]["parameters"]["url"]
     print("processing url: {}".format(url))
     return extract_summary(url)

@@ -56,3 +56,5 @@ bearer = utils.get_bearer()
 
 resp = requests.post(url=constants.SUMMARY_BOT_URL, json=request, headers={"bearer": bearer})
 print(resp.json())
+resp = requests.post(url=constants.SUMMARY_BOT_URL)
+print(resp.content)

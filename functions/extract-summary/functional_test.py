@@ -8,3 +8,6 @@ bearer = utils.get_bearer()
 
 resp = requests.post(url=constants.SUMMARY_EXTRACTOR_URL, json={"url": test_url, "bearer": bearer})
 print(resp.json())
+
+resp = requests.post(url=constants.SUMMARY_EXTRACTOR_URL)
+print(resp.content)

@@ -1,3 +1,5 @@
+import base64
+
 import nltk
 import utils
 
@@ -42,6 +44,10 @@ def process_url(url):
 
 def process_request(request):
     request_json = request.get_json()
+    if not request_json:
+        # Assuming this is a request from cloud scheduler to keep function HOT
+        # Find a better way to do this
+        return "PING_OK"
     # Yes the following three lines are horrible, there is a reason for this, and it will be fixed ASAP.
     bearer_from_request = request_json["bearer"]
     if bearer_from_request != bearer:
