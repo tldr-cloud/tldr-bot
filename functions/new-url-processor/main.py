@@ -30,7 +30,7 @@ secret_name = client.secret_version_path(constants.PROJECT_ID, secret_id, "1")
 secret_response = client.access_secret_version(secret_name)
 bearer = secret_response.payload.data.decode('UTF-8')
 
-summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
+summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary-bert"
 
 
 def generate_id_from_url(url):

@@ -28,26 +28,26 @@ def extract_data(url):
      if not article.text or len(article.text) < 100:
          article.text = extractor.get_content(article.html)
 
-     # try:
-     #     print("attempting to extract summary")
-     #     summary = attempt_extract_summary_bert(article.text)
-     #     print("bert summary extracted")
-     # except Exception as e:
-     #     utils.inform_boss_about_an_error(str(e), "extract-summary")
-     #     article.nlp()
-     #     summary = article.summary
-     #     print("good old summary extracted")
-     article.nlp()
-     summary = article.summary
+     try:
+         print("attempting to extract summary")
+         summary = attempt_extract_summary_bert(article.text)
+         print("bert summary extracted")
+     except Exception as e:
+         utils.inform_boss_about_an_error(str(e), "extract-summary")
+         article.nlp()
+         summary = article.summary
+         print("good old summary extracted")
+     # article.nlp()
+     # summary = article.summary
      print("nlp step completed")
      return (summary, article.top_image, article.title)
 
 
-# def attempt_extract_summary_bert(text):
-#     resp = requests.post(url="http://10.128.0.2:5000/summarize?ratio=0.1&max_length=700", data=text.encode('utf-8'), headers={
-#         "Content-type": "text/plain"
-#     }, timeout=10)
-#     return resp.json()["summary"]
+def attempt_extract_summary_bert(text):
+    resp = requests.post(url="http://10.128.0.2:5000/summarize?ratio=0.05", data=text.encode('utf-8'), headers={
+        "Content-type": "text/plain"
+    }, timeout=60)
+    return resp.json()["summary"]
 
 
 def process_url(url):

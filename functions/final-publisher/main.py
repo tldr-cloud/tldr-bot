@@ -28,8 +28,12 @@ def publish(doc_id):
     title = doc.get("title")
     url = doc.get("url")
     text = ""
-    for paragraph in doc.get("summary").split("\n"):
-        text = "{}\n* {}".format(text, paragraph)
+    points = doc.get("summary").split("\n")
+    if len(points) > 1:
+        for paragraph in points:
+            text = "{}\n* {}".format(text, paragraph)
+    else:
+        text = doc.get("summary")
 
     text = utils.helpers.escape_markdown(text, version=2)
 
