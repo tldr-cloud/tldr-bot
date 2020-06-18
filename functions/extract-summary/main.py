@@ -1,5 +1,3 @@
-import base64
-
 import nltk
 import requests
 import utils
@@ -15,43 +13,58 @@ bearer = utils.get_bearer()
 
 
 def generate_id_from_url(url):
-     return url.replace("/", "_").replace(":", "_")
+    return url.replace("/", "_").replace(":", "_")
 
 
-def extract_data(url):
-     article = Article(url)
-     print("article object created")
-     article.download()
-     print("download completed")
-     article.parse()
-     print("parsing completed")
-     if not article.text or len(article.text) < 100:
-         article.text = extractor.get_content(article.html)
+def extract_data(url, bert_summary):
+    article = Article(url)
+    print("article object created")
+    article.download()
+    print("download completed")
+    article.parse()
+    print("parsing completed")
 
-     # try:
-     #     print("attempting to extract summary")
-     #     summary = attempt_extract_summary_bert(article.text)
-     #     print("bert summary extracted")
-     # except Exception as e:
-     #     utils.inform_boss_about_an_error(str(e), "extract-summary")
-     #     article.nlp()
-     #     summary = article.summary
-     #     print("good old summary extracted")
-     article.nlp()
-     summary = article.summary
-     print("nlp step completed")
-     return (summary, article.top_image, article.title)
+    # Not always article extracts correctly text from the HTML. In case text has not been extracted using alternative
+    # way.
+    if not article.text or len(article.text) < 100:
+        print("looks like article text is not extracted")
+        article.text = extractor.get_content(article.html)
 
+    top_image = article.top_image
+    title = article.title
 
-# def attempt_extract_summary_bert(text):
-#     resp = requests.post(url="http://10.128.0.2:5000/summarize?ratio=0.1&max_length=700", data=text.encode('utf-8'), headers={
-#         "Content-type": "text/plain"
-#     }, timeout=10)
-#     return resp.json()["summary"]
+    if bert_summary:
+        print("extracting bert summary")
+        summary = extract_bert_summary(article.text)
+    else:
+        print("extracting short summary")
+        summary = extract_short_summary(article)
+
+    return summary, top_image, title
 
 
-def process_url(url):
-    summary, top_image, title = extract_data(url)
+def extract_bert_summary(text):
+    char_count = float(len(text))
+    if (char_count * 0.1) > 550:
+        ratio = 0.05
+    else:
+        ratio = 0.1
+
+    resp = requests.post(url="http://10.128.0.2:5000/summarize?ratio={}".format(str(ratio)),
+                         data=text.encode('utf-8'),
+                         headers={
+                             "Content-type": "text/plain"
+                         }, timeout=60)
+    return resp.json()["summary"]
+
+
+def extract_short_summary(article):
+    article.nlp()
+    return article.summary
+
+
+def process_url(url, bert_summary):
+    summary, top_image, title = extract_data(url, bert_summary)
     doc_data = {
         "summary": summary,
         "top_image": top_image,
@@ -73,7 +86,8 @@ def process_request(request):
         return "error"
     if "url" in request_json:
         url = request_json["url"]
-        return jsonify(process_url(url))
+        bert_summary = request_json.get("bert_summary", False)
+        return jsonify(process_url(url, bert_summary))
     else:
         return f"There is not url key in the request!"
 

@@ -38,7 +38,7 @@ def generate_id_from_url(url):
 
 
 def extract_data(url):
-     resp = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer}).json()
+     resp = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer, "bert_summary": True}).json()
      return (resp["summary"], resp["top_image"], resp["title"])
 
 

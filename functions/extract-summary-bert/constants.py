@@ -1,6 +1,0 @@
-PROJECT_ID = "tldr-278619"
-SUMMARY_EXTRACTOR_URL = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
-SUMMARY_EXTRACTOR_BERT_URL = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary-bert"
-SUMMARY_BOT_URL = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary-bot"
-BEARER_SECRET_ID = "bearer"
-TELEGRAM_TLDR_BOT_SECRET_ID = "tldrmebot_key"
