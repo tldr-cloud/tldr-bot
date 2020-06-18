@@ -1,5 +1,7 @@
 #!/bin/bash
 
+python main.py || exit 1
+
 gcloud functions deploy test-publisher \
     --region us-central1 \
     --project tldr-278619 \
@@ -7,4 +9,4 @@ gcloud functions deploy test-publisher \
     --runtime python37 \
     --memory 512 \
     --trigger-topic "processed-urls-test" \
-    --service-account final-publisher@tldr-278619.iam.gserviceaccount.com
+    --service-account final-publisher@tldr-278619.iam.gserviceaccount.com || exit 1

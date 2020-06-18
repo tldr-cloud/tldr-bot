@@ -30,7 +30,7 @@ secret_name = client.secret_version_path(constants.PROJECT_ID, secret_id, "1")
 secret_response = client.access_secret_version(secret_name)
 bearer = secret_response.payload.data.decode('UTF-8')
 
-summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary-bert"
+summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
 
 
 def generate_id_from_url(url):
@@ -39,7 +39,7 @@ def generate_id_from_url(url):
 
 def extract_data(url):
      resp = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer, "bert_summary": True}).json()
-     return (resp["summary"], resp["top_image"], resp["title"])
+     return resp["summary"], resp["top_image"], resp["title"]
 
 
 def publish_id(doc_id, test):
