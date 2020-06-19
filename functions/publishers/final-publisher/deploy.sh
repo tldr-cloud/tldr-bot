@@ -6,5 +6,5 @@ gcloud functions deploy final-publisher \
     --entry-point function_call_publish \
     --runtime python37 \
     --memory 128 \
-    --trigger-topic "processed-urls" \
+    --trigger-topic "prod-publish-events-topic" \
     --service-account final-publisher@tldr-278619.iam.gserviceaccount.com

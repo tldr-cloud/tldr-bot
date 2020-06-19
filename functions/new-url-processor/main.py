@@ -42,14 +42,10 @@ def extract_data(url):
      return resp["summary"], resp["top_image"], resp["title"]
 
 
-def publish_id(doc_id, test):
+def publish_id_to_test(doc_id):
     msg_data = doc_id.encode("utf-8")
-    if test:
-        topic_path = test_topic_path
-    else:
-        topic_path = prod_topic_path
     publisher.publish(
-        topic_path, msg_data
+        test_topic_path, msg_data
     )
     print("msg published")
 
@@ -62,19 +58,29 @@ def process_url(url, test):
         print("new doc created")
     except exceptions.AlreadyExists:
         print("exceptions.AlreadyExists")
-        publish_id(doc_id, test)
+        if test:
+            publish_id_to_test(doc_id)
+        else:
+            updated_doc_data = {
+                "publish": True
+            }
+            urls_collection.document(doc_id).set(updated_doc_data, merge=True)
         return
     summary, top_image, title = extract_data(url)
+    publish = not test
+    published = False
     doc_data = {
         "summary": summary,
         "top_image": top_image,
         "url": url,
-        "title": title
+        "title": title,
+        "publish": publish,
+        "published": published
     }
     print("adding record to db")
     urls_collection.document(doc_id).set(doc_data)
     print("added")
-    publish_id(doc_id, test)
+    publish_id_to_test(doc_id)
 
 
 def process_function_all(event, context):

@@ -1,14 +1,31 @@
-import base64
 import utils
 import publish_utils
 
+from google.cloud import firestore
+
+
 prod_chat_id = "@techtldr"
+urls_collection = firestore.Client().collection(u"urls")
+
+
+def publish_all_unpublished_docs():
+    docs = urls_collection.where(u"publish", u"==", True).where(u"published", u"==", False).stream()
+
+    for doc in docs:
+        print("doc found: {}".format(str(doc.id)))
+        publish_utils.publish_doc(doc, prod_chat_id)
+        updated_doc_data = {
+            "publish": False,
+            "published": True
+        }
+        urls_collection.document(doc.id).set(updated_doc_data, merge=True)
 
 
 def function_call_publish(event, context):
     try:
         print("final-publisher invoked")
-        doc_id = base64.b64decode(event["data"]).decode("utf-8")
-        publish_utils.publish_doc(doc_id, prod_chat_id)
+        publish_all_unpublished_docs()
     except Exception as e:
         utils.inform_boss_about_an_error(str(e), "final-publisher")
+
+publish_all_unpublished_docs()

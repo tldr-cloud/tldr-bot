@@ -10,7 +10,7 @@ def function_call_publish(event, context):
         print("final-publisher invoked")
         doc_id = base64.b64decode(event["data"]).decode("utf-8")
         print("msg data: {}".format(doc_id))
-        publish_utils.publish_doc(doc_id, test_chat_id)
+        publish_utils.publish_doc_id(doc_id, test_chat_id)
     except Exception as e:
         utils.inform_boss_about_an_error(str(e), "test-publisher")
 

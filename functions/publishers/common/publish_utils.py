@@ -28,11 +28,15 @@ def publish(chat_id, url, text, title, top_image):
                      disable_web_page_preview=True)
 
 
-def publish_doc(doc_id, chat_id):
+def publish_doc_id(doc_id, chat_id):
     doc_ref = urls_collection.document(doc_id)
     doc = doc_ref.get()
     if not doc.exists:
         return
+    publish_doc(doc, chat_id)
+
+
+def publish_doc(doc, chat_id):
     top_image = doc.get("top_image")
     title = doc.get("title")
     url = doc.get("url")
@@ -44,4 +48,3 @@ def publish_doc(doc_id, chat_id):
     else:
         text = doc.get("summary")
     publish(chat_id, url, text, title, top_image)
-
