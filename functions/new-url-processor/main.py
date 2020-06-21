@@ -75,7 +75,8 @@ def process_url(url, test):
         "url": url,
         "title": title,
         "publish": publish,
-        "published": published
+        "published": published,
+        "new": True
     }
     print("adding record to db")
     urls_collection.document(doc_id).set(doc_data)
