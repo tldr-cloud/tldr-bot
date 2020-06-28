@@ -12,7 +12,7 @@ def function_call_publish(event, context):
         print("msg data: {}".format(doc_id))
         publish_utils.publish_doc_id(doc_id, test_chat_id)
     except Exception as e:
-        utils.inform_boss_about_an_error(str(e), "test-publisher")
+        utils.inform_boss_about_an_error("for doc: {}, error: {}".format(doc_id, str(e)), "test-publisher")
 
 
 if "__main__" == __name__:
