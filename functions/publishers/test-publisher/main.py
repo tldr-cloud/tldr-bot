@@ -16,4 +16,5 @@ def function_call_publish(event, context):
 
 
 if "__main__" == __name__:
-    publish_utils.publish_doc("https___9to5mac.com_2020_06_15_apple-developer-app-updated-ahead-of-wwdc-2020-with-macos-version_amp_", test_chat_id)
+    publish_utils.publish_doc_id("https___9to5mac.com_2020_06_15_apple-developer-app-updated-ahead-of-wwdc-2020-with-"
+                                 "macos-version_amp_", test_chat_id)

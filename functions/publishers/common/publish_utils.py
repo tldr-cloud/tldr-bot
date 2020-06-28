@@ -37,7 +37,11 @@ def publish_doc_id(doc_id, chat_id):
 
 
 def publish_doc(doc, chat_id):
-    top_image = doc.get("top_image")
+    try:
+        top_image = doc.get("top_image")
+    except Exception as e:
+        print(str(e))
+        top_image = None
     title = doc.get("title")
     url = doc.get("url")
     text = ""

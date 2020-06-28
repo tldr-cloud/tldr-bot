@@ -62,7 +62,7 @@ def process_url(url, test):
             publish_id_to_test(doc_id)
         else:
             updated_doc_data = {
-                "publish": True
+                "publish": not test
             }
             urls_collection.document(doc_id).set(updated_doc_data, merge=True)
         return
