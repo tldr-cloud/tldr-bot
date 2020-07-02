@@ -1,20 +1,35 @@
 steps:
   - name: "gcr.io/cloud-builders/git"
+    id: "clone"
     args:
       - "clone"
       - "https://github.com/tldr-cloud/tldr-bot.git"
   - name: "gcr.io/cloud-builders/git"
+    id: "checkout"
     dir: "tldr-bot"
+    waitFor: ["clone"]
     args:
       - "checkout"
       - "${COMMIT_SHA}"
   - name: "gcr.io/tldr-278619/ci-agent"
+    id: "add-url-pub"
     dir: "tldr-bot/functions/add-url-pub"
+    waitFor: ["checkout"]
     entrypoint: "/bin/bash"
     args:
       - "-c"
       - "./deploy.sh"
   - name: "gcr.io/tldr-278619/ci-agent"
+    id: "extract-summary"
+    waitFor: ["checkout"]
+    dir: "tldr-bot/functions/extract-summary"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - "./deploy.sh"
+  - name: "gcr.io/tldr-278619/ci-agent"
+    id: "test-publisher"
+    waitFor: ["checkout"]
     dir: "tldr-bot/functions/publishers/test-publisher"
     entrypoint: "/bin/bash"
     args:

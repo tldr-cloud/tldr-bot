@@ -1,6 +1,8 @@
 #!/bin/bash
 
-python -m unittest discover || exit 1
+python3 -m pip install -r ./requirements.txt || exit 1
+
+python3 -m unittest discover || exit 1
 
 gcloud functions deploy extract-summary  \
     --region us-central1 \
@@ -13,4 +15,4 @@ gcloud functions deploy extract-summary  \
 
 sleep 5
 
-python functional_test.py || exit 1
+python3 functional_test.py || exit 1
