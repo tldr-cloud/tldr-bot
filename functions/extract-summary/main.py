@@ -1,9 +1,10 @@
 import nltk
 import requests
 import utils
+import urllib
 
 from boilerpy3 import extractors
-from newspaper import Article
+from newspaper import Article, fulltext
 from flask import jsonify
 
 nltk.download("punkt")
@@ -27,8 +28,9 @@ def extract_data(url, bert_summary):
     # Not always article extracts correctly text from the HTML. In case text has not been extracted using alternative
     # way.
     if not article.text or len(article.text) < 100:
-        print("looks like article text is not extracted")
-        article.text = extractor.get_content(article.html)
+        print("looks like article text is not extracted, most likely download has failed")
+        html = urllib.request.urlopen(url).read() 
+        article.text = fulltext(html)
 
     top_image = article.top_image
     title = article.title
