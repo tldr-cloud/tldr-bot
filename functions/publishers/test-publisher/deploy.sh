@@ -4,7 +4,7 @@ python3 -m pip install -r ./requirements.txt || exit 1
 
 python3 main.py || exit 1
 
-gcloud3 functions deploy test-publisher \
+gcloud functions deploy test-publisher \
     --region us-central1 \
     --project tldr-278619 \
     --entry-point function_call_publish \

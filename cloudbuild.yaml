@@ -28,6 +28,22 @@ steps:
       - "-c"
       - "./deploy.sh"
   - name: "gcr.io/tldr-278619/ci-agent"
+    id: "extract-summary-bot"
+    waitFor: ["checkout"]
+    dir: "tldr-bot/functions/extract-summary-bot"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - "./deploy.sh"
+  - name: "gcr.io/tldr-278619/ci-agent"
+    id: "new-url-processor"
+    waitFor: ["checkout"]
+    dir: "tldr-bot/functions/new-url-processor"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - "./deploy.sh"
+  - name: "gcr.io/tldr-278619/ci-agent"
     id: "test-publisher"
     waitFor: ["checkout"]
     dir: "tldr-bot/functions/publishers/test-publisher"

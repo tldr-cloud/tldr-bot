@@ -1,6 +1,8 @@
 #!/bin/bash
 
-python -m unittest discover || exit 1
+python3 -m pip install -r ./requirements.txt || exit 1
+
+python3 -m unittest discover || exit 1
 
 gcloud functions deploy new-url-processor  \
     --region us-central1 \
