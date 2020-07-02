@@ -20,11 +20,14 @@ def generate_id_from_url(url):
 def extract_data(url, bert_summary):
     article = Article(url)
     print("article object created")
-    article.download()
-    print("download completed")
-    article.parse()
-    print("parsing completed")
-
+    try:
+      article.download()
+      print("download completed")
+      article.parse()
+      print("parsing completed")
+    except: 
+      html = urllib.request.urlopen(url).read()
+      article.text = fulltext(html)     
     # Not always article extracts correctly text from the HTML. In case text has not been extracted using alternative
     # way.
     if not article.text or len(article.text) < 100:
