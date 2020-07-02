@@ -1,6 +1,10 @@
 import constants
 
 
+def generate_id_from_url(url):
+    return url.replace("/", "_").replace(":", "_")
+
+
 def get_bearer():
     from google.cloud import secretmanager
 

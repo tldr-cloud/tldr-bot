@@ -3,6 +3,7 @@ import nltk
 import requests
 import constants
 import json
+import utils
 
 from boilerpy3 import extractors
 
@@ -33,10 +34,6 @@ bearer = secret_response.payload.data.decode('UTF-8')
 summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
 
 
-def generate_id_from_url(url):
-     return url.replace("/", "_").replace(":", "_")
-
-
 def extract_data(url):
      resp = requests.post(url=summary_extractor_url, json={"url": url, "bearer": bearer, "bert_summary": True}).json()
      return resp["summary"], resp["top_image"], resp["title"]
@@ -51,7 +48,7 @@ def publish_id_to_test(doc_id):
 
 
 def process_url(url, test):
-    doc_id = generate_id_from_url(url)
+    doc_id = utils.generate_id_from_url(url)
     print("url_id: {}".format(url))
     try:
         urls_collection.add({}, doc_id)
@@ -66,7 +63,14 @@ def process_url(url, test):
             }
             urls_collection.document(doc_id).set(updated_doc_data, merge=True)
         return
-    summary, top_image, title = extract_data(url)
+
+    try:
+        summary, top_image, title = extract_data(url)
+    except:
+        print("doc ref deleted")
+        # deleting the document since it is empty
+        urls_collection.document(doc_id).delete()
+        raise
     publish = not test
     published = False
     doc_data = {
@@ -90,11 +94,3 @@ def process_function_all(event, context):
     data_dict = json.loads(data)
     print("data: {}".format(str(data_dict)))
     process_url(data_dict["url"], data_dict["test"])
-
-
-def main():
-    process_url("https://thehustle.co/05282020-remote-work-pay/")
-
-
-if "__main__" == __name__:
-    main()

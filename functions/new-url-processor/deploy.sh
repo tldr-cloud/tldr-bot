@@ -1,5 +1,7 @@
 #!/bin/bash
 
+python -m unittest discover || exit 1
+
 gcloud functions deploy new-url-processor  \
     --region us-central1 \
     --project tldr-278619 \
