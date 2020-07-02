@@ -14,3 +14,9 @@ steps:
     args:
       - "-c"
       - "./deploy.sh"
+  - name: "gcr.io/tldr-278619/ci-agent"
+    dir: "tldr-bot/functions/publishers/test-publisher"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - "./deploy.sh"
