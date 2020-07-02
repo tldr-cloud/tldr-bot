@@ -39,7 +39,7 @@ def publish_doc_id(doc_id, chat_id):
 def publish_doc(doc, chat_id):
     try:
         top_image = doc.get("top_image")
-    except Exception as e:
+    "pt Exception as e:
         print(str(e))
         top_image = None
     title = doc.get("title")

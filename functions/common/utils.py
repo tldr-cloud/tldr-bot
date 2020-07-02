@@ -15,6 +15,9 @@ def get_bearer():
 
 
 def inform_boss_about_an_error(error, function_name):
+    # if used please add the following dependencies:
+    # google-cloud-secret-manager==1.0.*
+    # python-telegram-bot==12.7.*
     import telegram
     from google.cloud import secretmanager
 
