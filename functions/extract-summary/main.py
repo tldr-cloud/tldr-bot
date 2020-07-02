@@ -101,4 +101,5 @@ def process_call(request):
     try:
         return process_request(request)
     except Exception as e:
-        utils.inform_boss_about_an_error(str(e), "extract-summary")
+        utils.inform_boss_about_an_error("request: {}, error: {}".format(str(request.get_json()), str(e)),
+                                         "extract-summary")
