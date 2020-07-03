@@ -3,19 +3,23 @@ from google.cloud import firestore
 urls_collection = firestore.Client().collection(u"urls")
 
 
-def get_yes_or_no(text):
+def get_answer_from(text, answer_space, default):
     answer = input(text)
     if not answer:
-        return False
+        return default
 
     answer = answer.lower()
-    if answer == "y":
-        return True
-    elif answer == "n":
-        return False
+    if answer in answer_space:
+        return answer
     else:
-        print("yes or no only")
-        return get_yes_or_no(text)
+        return get_answer_from(text, answer_space)
+    # if answer == "y":
+    #     return True
+    # elif answer == "n":
+    #     return False
+    # else:
+    #     print("yes or no only")
+    #     return get_yes_or_no(text)
 
 
 def ask_to_approve(title, url, top_image, text):
@@ -26,7 +30,11 @@ def ask_to_approve(title, url, top_image, text):
     print(text)
     print("################### END #################")
 
-    return get_yes_or_no("Approve? (y/N)")
+    answer = get_answer_from("Approve? (y/N)", "yn", "n")
+    if answer == "y":
+        return True
+    elif answer == "n":
+        return False
 
 
 def main():
@@ -44,13 +52,17 @@ def main():
         if ask_to_approve(title, url, top_image, text):
             publish = True
             print("approved")
+            skip_reason = None
         else:
             publish = False
             print("skipping")
+            skip_reason = get_answer_from("Reason? (B)ad news/already (p)ublished/news is good bud (s)ummary is bad",
+                                          "bps", "b")
 
         updated_doc_data = {
             "publish": publish,
-            "new": False
+            "new": False,
+            "skip_reason": skip_reason
         }
         urls_collection.document(doc.id).set(updated_doc_data, merge=True)
 
