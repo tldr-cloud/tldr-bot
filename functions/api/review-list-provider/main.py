@@ -12,9 +12,9 @@ def process_function_request(request):
                                                                                                           True).stream()
 
     docs = [{
-        "title": doc["title"],
-        "url": doc["url"],
-        "top_image": doc["top_image"],
-        "summary": doc["summary"]
+        "title": doc.get("title"),
+        "url": doc.get("url"),
+        "top_image": doc.get("top_image"),
+        "summary": doc.get("summary")
     } for doc in docs_stream]
     return jsonify(docs)
