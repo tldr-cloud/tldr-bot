@@ -11,6 +11,7 @@ gcloud functions deploy extract-summary  \
     --runtime python37 \
     --trigger-http \
     --memory 256 \
+    --timeout "540s" \
     --service-account summarizer@tldr-278619.iam.gserviceaccount.com || exit 1
 
 sleep 5
