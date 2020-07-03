@@ -3,14 +3,12 @@ import requests
 import utils
 import urllib
 
-from boilerpy3 import extractors
-from newspaper import Article, fulltext
+from newspaper import Article
 from newspaper.article import ArticleDownloadState
 from flask import jsonify
 
 nltk.download("punkt")
 
-extractor = extractors.ArticleExtractor()
 bearer = utils.get_bearer()
 
 
@@ -23,8 +21,7 @@ def extract_data(url, bert_summary):
     print("article object created")
     article.download()
     if article.download_state != ArticleDownloadState.SUCCESS:
-       html = urllib.request.urlopen(url).read()
-       article.html = html
+       article.html = urllib.request.urlopen(url).read()
        # Hacking the library
        article.download_state = ArticleDownloadState.SUCCESS
     print("download completed")
