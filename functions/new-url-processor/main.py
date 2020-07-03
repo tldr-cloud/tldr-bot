@@ -11,25 +11,16 @@ from google.cloud import firestore
 from google.cloud import pubsub_v1
 from google.api_core import exceptions
 
-from google.cloud import secretmanager
-
-secret_id = "bearer"
-
 nltk.download("punkt")
 
 urls_collection = firestore.Client().collection(u"urls")
 extractor = extractors.ArticleExtractor()
 
 publisher = pubsub_v1.PublisherClient()
-prod_topic = "processed-urls"
-prod_topic_path = publisher.topic_path(constants.PROJECT_ID, prod_topic)
 test_topic = "processed-urls-test"
 test_topic_path = publisher.topic_path(constants.PROJECT_ID, test_topic)
 
-client = secretmanager.SecretManagerServiceClient()
-secret_name = client.secret_version_path(constants.PROJECT_ID, secret_id, "1")
-secret_response = client.access_secret_version(secret_name)
-bearer = secret_response.payload.data.decode('UTF-8')
+bearer = utils.get_bearer()
 
 summary_extractor_url = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
 
