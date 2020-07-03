@@ -5,7 +5,6 @@ from google.cloud import secretmanager
 from google.cloud import firestore
 from telegram import utils
 
-
 client = secretmanager.SecretManagerServiceClient()
 secret_name = client.secret_version_path(constants.PROJECT_ID, constants.TELEGRAM_TLDR_BOT_SECRET_ID, "1")
 secret_response = client.access_secret_version(secret_name)
@@ -24,8 +23,8 @@ def publish(chat_id, url, text, title, top_image):
                      disable_web_page_preview=True)
     if top_image:
         bot.send_photo(chat_id=chat_id, photo=top_image)
-    bot.send_message(chat_id=chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN_V2,
-                     disable_web_page_preview=True)
+    return bot.send_message(chat_id=chat_id, text=text, parse_mode=telegram.ParseMode.MARKDOWN_V2,
+                            disable_web_page_preview=True)
 
 
 def publish_doc_id(doc_id, chat_id):
@@ -33,7 +32,7 @@ def publish_doc_id(doc_id, chat_id):
     doc = doc_ref.get()
     if not doc.exists:
         return
-    publish_doc(doc, chat_id)
+    return publish_doc(doc, chat_id)
 
 
 def publish_doc(doc, chat_id):
@@ -51,4 +50,10 @@ def publish_doc(doc, chat_id):
             text = "{}\n* {}".format(text, paragraph)
     else:
         text = doc.get("summary")
-    publish(chat_id, url, text, title, top_image)
+    return publish(chat_id, url, text, title, top_image)
+
+
+def generate_telegram_link(chat_id, message_id):
+    if "@" in chat_id:
+        chat_id = chat_id.replace("@", "")
+    return f"https://t.me/{chat_id}/{message_id}"

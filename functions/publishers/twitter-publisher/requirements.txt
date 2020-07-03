@@ -1,0 +1,2 @@
+google-cloud-secret-manager==1.0.*
+python-twitter==3.5.*

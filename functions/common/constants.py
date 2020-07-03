@@ -1,6 +1,9 @@
 # GCP constants
 PROJECT_ID = "tldr-278619"
+
+## Pub/Sub
 NEW_URLS_TOPIC_NAME = "new-urls"
+TWITTER_PUBLISH_QUEUE_TOPIC_NAME = "twitter-publish-queue"
 
 # URLs
 SUMMARY_EXTRACTOR_URL = "https://us-central1-tldr-278619.cloudfunctions.net/extract-summary"
