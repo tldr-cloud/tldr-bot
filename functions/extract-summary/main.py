@@ -5,6 +5,7 @@ import urllib
 
 from boilerpy3 import extractors
 from newspaper import Article, fulltext
+from newspaper.article import ArticleDownloadState
 from flask import jsonify
 
 nltk.download("punkt")
@@ -20,20 +21,15 @@ def generate_id_from_url(url):
 def extract_data(url, bert_summary):
     article = Article(url)
     print("article object created")
-    try:
-      article.download()
-      print("download completed")
-      article.parse()
-      print("parsing completed")
-    except: 
-      html = urllib.request.urlopen(url).read()
-      article.text = fulltext(html)     
-    # Not always article extracts correctly text from the HTML. In case text has not been extracted using alternative
-    # way.
-    if not article.text or len(article.text) < 100:
-        print("looks like article text is not extracted, most likely download has failed")
-        html = urllib.request.urlopen(url).read() 
-        article.text = fulltext(html)
+    article.download()
+    if article.download_state != ArticleDownloadState.SUCCESS:
+       html = urllib.request.urlopen(url).read()
+       article.html = html
+       # Hacking the library
+       article.download_state = ArticleDownloadState.SUCCESS
+    print("download completed")
+    article.parse()
+    print("parsing completed")
 
     top_image = article.top_image
     title = article.title
