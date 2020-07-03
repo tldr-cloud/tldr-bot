@@ -30,9 +30,12 @@ def ask_to_approve(title, url, top_image, text):
 
 
 def main():
-    docs = urls_collection.where(u"publish", u"==", False).where(u"published", u"==", False).where(u"new",
-                                                                                                   u"==",
-                                                                                                   True).stream()
+    docs_stream = urls_collection.where(u"publish", u"==", False).where(u"published", u"==", False).where(u"new",
+                                                                                                          u"==",
+                                                                                                          True).stream()
+    # Stream is timing out so we need to convert lazy stream to a normal list
+    # this is ok since we never will have huge list for a review (or this is a bug that needs to be fixed)
+    docs = [doc for doc in docs_stream]
     for doc in docs:
         title = doc.get("title")
         url = doc.get("url")
