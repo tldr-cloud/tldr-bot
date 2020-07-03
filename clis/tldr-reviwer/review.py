@@ -13,13 +13,6 @@ def get_answer_from(text, answer_space, default):
         return answer
     else:
         return get_answer_from(text, answer_space)
-    # if answer == "y":
-    #     return True
-    # elif answer == "n":
-    #     return False
-    # else:
-    #     print("yes or no only")
-    #     return get_yes_or_no(text)
 
 
 def ask_to_approve(title, url, top_image, text):

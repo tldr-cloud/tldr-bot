@@ -1,0 +1,2 @@
+google-cloud-firestore==1.7.*
+flask==1.1.*
