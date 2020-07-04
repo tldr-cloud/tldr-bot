@@ -48,9 +48,9 @@ def main():
             skip_reason = None
         else:
             publish = False
-            print("skipping")
             skip_reason = get_answer_from("Reason? (B)ad news/already (p)ublished/news is good bud (s)ummary is bad",
                                           "bps", "b")
+            print("skipped with the reason: {}".format(skip_reason))
 
         updated_doc_data = {
             "publish": publish,

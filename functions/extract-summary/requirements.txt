@@ -3,3 +3,4 @@ nltk==3.5.*
 google-cloud-secret-manager==1.0.*
 python-telegram-bot==12.7.*
 flask==1.1.*
+google-auth==1.18.*

@@ -1,0 +1,19 @@
+{
+  "name": "v3",
+  "container": {
+    "image": "gcr.io/tldr-278619/summary-service-prediction",
+    "args": [
+        "-model=bert-large-uncased"
+    ],
+    "ports": [
+      {
+        "containerPort": 5000
+      }
+    ]
+  },
+  "routes": {
+    "predict": "/summarize",
+    "health": "/healthcheck"
+  },
+  "machine_type": "n1-standard-2"
+}

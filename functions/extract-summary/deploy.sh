@@ -2,7 +2,7 @@
 
 python3 -m pip install -r ./requirements.txt || exit 1
 
-python3 -m unittest discover || exit 1
+./test.sh || exit 1
 
 gcloud functions deploy extract-summary  \
     --region us-central1 \

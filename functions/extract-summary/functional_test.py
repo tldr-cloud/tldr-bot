@@ -11,3 +11,12 @@ print(resp.json())
 
 resp = requests.post(url=constants.SUMMARY_EXTRACTOR_URL)
 print(resp.content)
+
+resp = requests.post(
+    url=constants.SUMMARY_EXTRACTOR_URL,
+    json={
+        "url": test_url,
+        "bearer": bearer,
+        "bert_summary": True
+    })
+print(resp.json())
