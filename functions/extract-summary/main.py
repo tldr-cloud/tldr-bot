@@ -3,6 +3,7 @@ import requests
 import utils
 import urllib
 import traceback
+import time
 
 import google.auth
 import google.auth.transport.requests
@@ -16,21 +17,29 @@ nltk.download("punkt")
 bearer = utils.get_bearer()
 
 cred = None
+latest_cred_refresh_sec = None
+token_refresh_interval = 60 * 60
 
 
 def maybe_initiate_credentials():
     global cred
-    if not cred:
+    global latest_cred_refresh_sec
+
+    def refresh_token():
+        global latest_cred_refresh_sec
+        global cred
         cred, projects = google.auth.default()
         auth_req = google.auth.transport.requests.Request()
         cred.refresh(auth_req)
+        latest_cred_refresh_sec = time.time()
+
+    if not latest_cred_refresh_sec:
+        refresh_token()
+    elif time.time() - latest_cred_refresh_sec >= token_refresh_interval:
+        refresh_token()
 
 
 maybe_initiate_credentials()
-
-
-def generate_id_from_url(url):
-    return url.replace("/", "_").replace(":", "_")
 
 
 def extract_data(url, bert_summary, token):
@@ -59,6 +68,7 @@ def extract_data(url, bert_summary, token):
 
 
 def extract_bert_summary(text, token):
+    maybe_initiate_credentials()
     char_count = float(len(text))
     if (char_count * 0.1) > 550:
         ratio = 0.05
