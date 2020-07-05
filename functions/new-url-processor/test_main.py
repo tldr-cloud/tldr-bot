@@ -10,7 +10,7 @@ class TestMain(unittest.TestCase):
     def test_process_url_doc_gc(self):
         urls_collection = firestore.Client().collection(u"urls")
 
-        url = "https://test.com/123"
+        url = "https://test.com/1234"
         doc_id = utils.generate_id_from_url(url)
         try:
             main.process_url(doc_id, True)
