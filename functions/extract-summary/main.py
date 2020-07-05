@@ -112,10 +112,7 @@ def process_request(request):
         # Assuming this is a request from cloud scheduler to keep function HOT
         # Find a better way to do this
         return "PING_OK"
-    # Yes the following three lines are horrible, there is a reason for this, and it will be fixed ASAP.
-    bearer_from_request = request_json["bearer"]
-    if bearer_from_request != bearer:
-        return "error"
+
     if "url" in request_json:
         url = request_json["url"]
         bert_summary = request_json.get("bert_summary", False)
