@@ -66,8 +66,7 @@ def extract_bert_summary(text, token):
         ratio = 0.1
 
     print("about to request cloud AI Prediction")
-    resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer/versions/"
-                             "v3:predict",
+    resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer:predict",
                          json={
                              "summary": text,
                              "ratio": ratio
