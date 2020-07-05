@@ -46,7 +46,8 @@ def process_url(url, test):
         print("new doc created")
     except exceptions.AlreadyExists:
         print("exceptions.AlreadyExists")
-        pass
+        publish_id_to_test(doc_id)
+        return
 
     try:
         summary, top_image, title = extract_data(url)
