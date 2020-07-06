@@ -41,13 +41,15 @@ def publish_id_to_test(doc_id):
 def process_url(url, test):
     doc_id = utils.generate_id_from_url(url)
     print("url_id: {}".format(url))
-    try:
-        urls_collection.add({}, doc_id)
+    doc = urls_collection.document(doc_id).get()
+    if doc.exists:
+        print("doc exists")
+        if "summary" in doc.to_dict():
+            publish_id_to_test(doc_id)
+            return
+    else:
         print("new doc created")
-    except exceptions.AlreadyExists:
-        print("exceptions.AlreadyExists")
-        publish_id_to_test(doc_id)
-        return
+        urls_collection.add({}, doc_id)
 
     try:
         summary, top_image, title = extract_data(url)

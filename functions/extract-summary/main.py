@@ -108,7 +108,7 @@ def extract_short_summary(article):
     return article.summary
 
 
-def process_url(url, bert_summary, token=cred.token):
+def process_url(url, bert_summary, token):
     summary, top_image, title = extract_data(url, bert_summary, token)
     doc_data = {
         "summary": summary,
@@ -129,7 +129,7 @@ def process_request(request):
     if "url" in request_json:
         url = request_json["url"]
         bert_summary = request_json.get("bert_summary", False)
-        return jsonify(process_url(url, bert_summary))
+        return jsonify(process_url(url, bert_summary, cred.token))
     else:
         return f"There is not url key in the request!"
 
