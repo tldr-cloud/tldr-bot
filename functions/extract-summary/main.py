@@ -18,7 +18,7 @@ bearer = utils.get_bearer()
 
 cred = None
 latest_cred_refresh_sec = None
-token_refresh_interval = 60 * 60
+token_refresh_interval = 60 * 5
 
 
 def maybe_initiate_credentials():
