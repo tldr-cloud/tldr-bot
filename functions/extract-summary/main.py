@@ -76,18 +76,31 @@ def extract_bert_summary(text, token):
         ratio = 0.1
 
     print("about to request cloud AI Prediction")
-    resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer:predict",
-                         json={
-                             "summary": text,
-                             "ratio": ratio
-                         },
-                         headers={
-                             "Content-type": "application/json",
-                             "Authorization": "Bearer {}".format(token)
-                         },
-                         timeout=240)
-    print("resp from cloud AI Prediction: {}".format(str(resp.json())))
-    return resp.json()["summary"]
+    retry_count = 0
+    while retry_count < 5:
+        resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer:predict",
+                             json={
+                                 "summary": text,
+                                 "ratio": ratio
+                             },
+                             headers={
+                                 "Content-type": "application/json",
+                                 "Authorization": "Bearer {}".format(token)
+                             },
+                             timeout=240)
+        resp_json = resp.json()
+        print("resp from cloud AI Prediction: {}".format(str(resp_json)))
+        if "error" in resp_json and resp_json["error"]["code"] == 503:
+            print("prediction error, retrying")
+            retry_count = retry_count + 1
+            time.sleep(5)
+            continue
+        break
+
+    if "summary" not in resp_json:
+        raise ValueError("there is no summary in the response from Cloud AI prediction")
+
+    return resp_json["summary"]
 
 
 def extract_short_summary(article):
