@@ -19,4 +19,5 @@ resp = requests.post(
         "bearer": bearer,
         "bert_summary": True
     })
+print(resp.content)
 print(resp.json())
