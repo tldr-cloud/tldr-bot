@@ -42,7 +42,7 @@ def maybe_initiate_credentials():
 maybe_initiate_credentials()
 
 
-def extract_data(url, bert_summary, token):
+def extract_data(url, bert_summary):
     article = Article(url)
     print("article object created")
     article.download()
@@ -59,7 +59,7 @@ def extract_data(url, bert_summary, token):
 
     if bert_summary:
         print("extracting bert summary")
-        summary = extract_bert_summary(article.text, token)
+        summary = extract_bert_summary(article.text)
     else:
         print("extracting short summary")
         summary = extract_short_summary(article)
@@ -67,8 +67,9 @@ def extract_data(url, bert_summary, token):
     return summary, top_image, title
 
 
-def extract_bert_summary(text, token):
+def extract_bert_summary(text):
     maybe_initiate_credentials()
+    token = cred.token
     char_count = float(len(text))
     if (char_count * 0.1) > 550:
         ratio = 0.05
@@ -108,8 +109,8 @@ def extract_short_summary(article):
     return article.summary
 
 
-def process_url(url, bert_summary, token):
-    summary, top_image, title = extract_data(url, bert_summary, token)
+def process_url(url, bert_summary):
+    summary, top_image, title = extract_data(url, bert_summary)
     doc_data = {
         "summary": summary,
         "top_image": top_image,
@@ -129,7 +130,7 @@ def process_request(request):
     if "url" in request_json:
         url = request_json["url"]
         bert_summary = request_json.get("bert_summary", False)
-        return jsonify(process_url(url, bert_summary, cred.token))
+        return jsonify(process_url(url, bert_summary))
     else:
         return f"There is not url key in the request!"
 

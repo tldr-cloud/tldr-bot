@@ -12,7 +12,7 @@ def get_answer_from(text, answer_space, default):
     if answer in answer_space:
         return answer
     else:
-        return get_answer_from(text, answer_space)
+        return get_answer_from(text, answer_space, default)
 
 
 def ask_to_approve(title, url, top_image, text):

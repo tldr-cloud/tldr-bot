@@ -5,7 +5,7 @@ import main
 class TestMain(unittest.TestCase):
 
     def extraction_url_test(self, url, bert: bool):
-        result = main.process_url(url, bert, main.cred.token)
+        result = main.process_url(url, bert)
         self.assertIsNotNone(result["summary"])
         self.assertIsNotNone(result["top_image"])
         self.assertIsNotNone(result["title"])
