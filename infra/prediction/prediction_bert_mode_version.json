@@ -1,7 +1,7 @@
 {
-  "name": "v5",
+  "name": "v6",
   "container": {
-    "image": "gcr.io/tldr-278619/summary-service-prediction",
+    "image": "gcr.io/tldr-278619/summary-service-prediction@sha256:a4257a65ee69bfd319e8accd16b1f7b2e2ce3e752a7d307b414f151e73d5253a",
     "args": [
         "-model=bert-large-uncased"
     ],

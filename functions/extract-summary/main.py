@@ -76,10 +76,14 @@ def extract_bert_summary(text):
     else:
         ratio = 0.1
 
+    print("ratio for the summary: {}".format(str(ratio)))
+    print("length of the original text is: {}".format(str(len(text))))
+
     print("about to request cloud AI Prediction")
     retry_count = 0
     while retry_count < 5:
-        resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer:predict",
+        resp = requests.post(url="https://alpha-ml.googleapis.com/v1/projects/tldr-278619/models/bert_summaryzer/"
+                                 "versions/v5:predict",
                              json={
                                  "summary": text,
                                  "ratio": ratio
