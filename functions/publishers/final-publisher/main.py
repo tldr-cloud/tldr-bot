@@ -1,3 +1,4 @@
+import time
 import json
 
 import constants
@@ -41,6 +42,7 @@ def publish_all_unpublished_docs():
         title = doc.get("title")
         link = publish_utils.generate_telegram_link(prod_chat_id, telegram_message.message_id)
         publish_to_twitter_topic(title, link)
+        time.sleep(3)
 
 
 def function_call_publish(event, context):
