@@ -5,6 +5,9 @@ import urllib
 import traceback
 import time
 
+from random import randint
+from time import sleep
+
 import google.auth
 import google.auth.transport.requests
 
@@ -95,11 +98,17 @@ def extract_bert_summary(text):
                              timeout=240)
         resp_json = resp.json()
         print("resp from cloud AI Prediction: {}".format(str(resp_json)))
-        if "error" in resp_json and resp_json["error"]["code"] == 503:
-            print("prediction error, retrying")
-            retry_count = retry_count + 1
-            time.sleep(5)
-            continue
+        if "error" in resp_json:
+            error_code = resp_json["error"]["code"]
+            if error_code  == 503:
+                print("prediction error, retrying")
+                retry_count = retry_count + 1
+                time.sleep(5)
+                continue
+            elif error_code == 429:
+                # 429 means: "Rate of traffic exceeds serving capacity"
+                sleep(randint(1, 5))
+                continue
         break
 
     if "summary" not in resp_json:
