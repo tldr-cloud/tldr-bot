@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from google.cloud import firestore
 
 urls_collection = firestore.Client().collection(u"urls")
@@ -55,7 +57,8 @@ def main():
         updated_doc_data = {
             "publish": publish,
             "new": False,
-            "skip_reason": skip_reason
+            "skip_reason": skip_reason,
+            "date": datetime.datetime.now()
         }
         urls_collection.document(doc.id).set(updated_doc_data, merge=True)
 
