@@ -16,20 +16,27 @@ def process_call(request):
     print("doc found: {}".format(str(doc.id)))
     titles.append(doc.get("title"))
 
-  items = [{"simpleResponse": {"textToSpeech": title}} for title in titles]
+  final_text = ". ".join(titles)
 
   bot_resp = {
     "payload": {
       "google": {
-        "expectUserResponse": True,
+        "expectUserResponse": False,
         "richResponse": {
-          "items": items
+          "items": [
+            {
+              "simpleResponse": {
+                "textToSpeech": final_text
+              }
+            }
+          ]
         }
       }
     }
   }
 
   return json.dumps(bot_resp)
+
 
 if __name__ == "__main__":
   print(process_call(None))

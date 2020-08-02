@@ -2,7 +2,7 @@ import datetime
 
 from google.cloud import firestore
 
-urls_collection = firestore.Client().collection(u"urls")
+urls_collection = firestore.Client(project="tldr-278619").collection(u"urls")
 
 
 def get_answer_from(text, answer_space, default):
