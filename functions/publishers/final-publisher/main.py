@@ -8,12 +8,16 @@ import publish_utils
 from google.cloud import firestore
 from google.cloud import pubsub_v1
 
+from datetime import datetime
+
 publisher = pubsub_v1.PublisherClient()
 twitter_topic_path = publisher.topic_path(constants.PROJECT_ID, constants.TWITTER_PUBLISH_QUEUE_TOPIC_NAME)
+mailsender_topic_path = publisher.topic_path(constants.MAILSENDER_PROJECT_ID,
+                                             constants.PUBLISH_NEWSLETTER_QUEUE_TOPIC_NAME)
 
 prod_chat_id = "@techtldr"
 urls_collection = firestore.Client().collection(u"urls")
-
+newsletter_collection = firestore.Client().collection(u"newsletters")
 
 def publish_to_twitter_topic(title, telegram_url):
     msg_dict = {
@@ -28,11 +32,25 @@ def publish_to_twitter_topic(title, telegram_url):
     )
 
 
+def notify_newsletter_publisher(ids_for_newsletter):
+    doc_data = {
+        "news_ids": ids_for_newsletter
+    }
+    id = datetime.now().strftime("%Y%m%d%H%M%S")
+    newsletter_collection.document(id).add(doc_data)
+    msg_data = id.encode("utf-8")
+    publisher.publish(
+        mailsender_topic_path, msg_data
+    )
+
+
 def publish_all_unpublished_docs():
     docs = urls_collection.where(u"publish", u"==", True).where(u"published", u"==", False).stream()
+    ids_for_newsletter = []
 
     for doc in docs:
         print("doc found: {}".format(str(doc.id)))
+        ids_for_newsletter.append(str(doc.id))
         updated_doc_data = {
             "publish": False,
             "published": True
@@ -43,6 +61,7 @@ def publish_all_unpublished_docs():
         link = publish_utils.generate_telegram_link(prod_chat_id, telegram_message.message_id)
         publish_to_twitter_topic(title, link)
         time.sleep(3)
+    notify_newsletter_publisher(ids_for_newsletter)
 
 
 def function_call_publish(event, context):
