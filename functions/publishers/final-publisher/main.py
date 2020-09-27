@@ -17,7 +17,8 @@ mailsender_topic_path = publisher.topic_path(constants.MAILSENDER_PROJECT_ID,
 
 prod_chat_id = "@techtldr"
 urls_collection = firestore.Client().collection(u"urls")
-newsletter_collection = firestore.Client().collection(u"newsletters")
+newsletter_collection = firestore.Client(
+    project=constants.MAILSENDER_PROJECT_ID).collection(u"newsletters")
 
 
 def publish_to_twitter_topic(title, telegram_url):
