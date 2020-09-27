@@ -81,4 +81,7 @@ def function_call_publish(event, context):
 
 
 if "__main__" == __name__:
-    notify_newsletter_publisher(["123", "231"], test=True)
+    notify_newsletter_publisher([
+        "http___techcrunch.com_2017_02_23_website-builder-wix-acquires-art-community-deviantart-for-36m_",
+        "http___techcrunch.com_2020_07_02_reliance-jio-platforms-launches-jiomeet-video-conference-service_"],
+        test=True)
