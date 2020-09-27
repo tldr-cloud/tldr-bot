@@ -1,5 +1,9 @@
 #!/bin/bash
 
+python3 -m unittest discover || exit 1
+
+python3 main.py || exit 1
+
 gcloud functions deploy final-publisher \
     --region us-central1 \
     --project tldr-278619 \

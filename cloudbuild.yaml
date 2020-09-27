@@ -51,3 +51,11 @@ steps:
     args:
       - "-c"
       - "./deploy.sh"
+  - name: "gcr.io/tldr-278619/ci-agent"
+    id: "final-publisher"
+    waitFor: ["test-publisher"]
+    dir: "tldr-bot/functions/publishers/final-publisher"
+    entrypoint: "/bin/bash"
+    args:
+      - "-c"
+      - "./deploy.sh"

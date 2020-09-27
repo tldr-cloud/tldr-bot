@@ -19,6 +19,7 @@ prod_chat_id = "@techtldr"
 urls_collection = firestore.Client().collection(u"urls")
 newsletter_collection = firestore.Client().collection(u"newsletters")
 
+
 def publish_to_twitter_topic(title, telegram_url):
     msg_dict = {
         "title": title,
@@ -32,12 +33,18 @@ def publish_to_twitter_topic(title, telegram_url):
     )
 
 
-def notify_newsletter_publisher(ids_for_newsletter):
+def notify_newsletter_publisher(ids_for_newsletter,
+                                publisher=publisher,
+                                collection=newsletter_collection,
+                                id=None,
+                                test=False):
     doc_data = {
-        "news_ids": ids_for_newsletter
+        "news_ids": ids_for_newsletter,
+        "test": test
     }
-    id = datetime.now().strftime("%Y%m%d%H%M%S")
-    newsletter_collection.document(id).add(doc_data)
+    if not id:
+        id = datetime.now().strftime("%Y%m%d%H%M%S")
+    collection.document(id).set(doc_data)
     msg_data = id.encode("utf-8")
     publisher.publish(
         mailsender_topic_path, msg_data
@@ -73,4 +80,4 @@ def function_call_publish(event, context):
 
 
 if "__main__" == __name__:
-    publish_all_unpublished_docs()
+    notify_newsletter_publisher(["123", "231"], test=True)
