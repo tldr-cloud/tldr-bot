@@ -69,7 +69,8 @@ def publish_all_unpublished_docs():
         link = publish_utils.generate_telegram_link(prod_chat_id, telegram_message.message_id)
         publish_to_twitter_topic(title, link)
         time.sleep(3)
-    notify_newsletter_publisher(ids_for_newsletter)
+    if len(ids_for_newsletter) > 0:
+        notify_newsletter_publisher(ids_for_newsletter)
 
 
 def function_call_publish(event, context):
