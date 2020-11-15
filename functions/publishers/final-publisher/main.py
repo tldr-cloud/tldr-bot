@@ -15,7 +15,8 @@ twitter_topic_path = publisher.topic_path(constants.PROJECT_ID, constants.TWITTE
 mailsender_topic_path = publisher.topic_path(constants.MAILSENDER_PROJECT_ID,
                                              constants.PUBLISH_NEWSLETTER_QUEUE_TOPIC_NAME)
 
-prod_chat_id = "@techtldr"
+old_prod_chat_id = "@techtldr"
+prod_chat_id = "@overnews"
 urls_collection = firestore.Client().collection(u"urls")
 newsletter_collection = firestore.Client(
     project=constants.MAILSENDER_PROJECT_ID).collection(u"newsletters")
@@ -64,6 +65,8 @@ def publish_all_unpublished_docs():
             "published": True
         }
         urls_collection.document(doc.id).set(updated_doc_data, merge=True)
+        # publishing to our old channel
+        publish_utils.publish_doc(doc, old_prod_chat_id)
         telegram_message = publish_utils.publish_doc(doc, prod_chat_id)
         title = doc.get("title")
         link = publish_utils.generate_telegram_link(prod_chat_id, telegram_message.message_id)
