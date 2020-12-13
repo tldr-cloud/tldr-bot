@@ -1,4 +1,4 @@
 python-telegram-bot==12.7.*
-google-cloud-firestore==1.7.*
-google-cloud-secret-manager==1.0.*
-google-cloud-pubsub==2.1.*
+google-cloud-firestore
+google-cloud-secret-manager
+google-cloud-pubsub
