@@ -1,6 +1,6 @@
 newspaper3k==0.2.*
 nltk==3.5.*
-google-cloud-firestore==1.7.*
-google-cloud-pubsub==1.5.*
+google-cloud-firestore
+google-cloud-pubsub
 boilerpy3==1.0.*
 google-cloud-secret-manager==1.0.*
